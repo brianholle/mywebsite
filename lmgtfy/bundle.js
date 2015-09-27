@@ -460,7 +460,7 @@ $(function(){
         google = "http://www.google.com/search?hl=en&btnI=I%27m+Feeling+Lucky&pws=0&q="; //Set this to another query
       }
 
-      window.location = google + gentlyEncode(searchString);
+      window.location = google;
     }
 
     function fixSafariRenderGlitch() {
