@@ -236,9 +236,9 @@ function gentlyDecode(string) {
 // default lang necessities
 $.localize.data.lmgtfy = {
   setup: {
-    type_question: "Type a question, click a button.",
-    share_link:    "Share the link below.",
-    or:            "or"
+    type_question: "",
+    share_link:    "",
+    or:            ""
   },
 
   play: {
