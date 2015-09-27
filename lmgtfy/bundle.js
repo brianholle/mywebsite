@@ -242,10 +242,10 @@ $.localize.data.lmgtfy = {
   },
 
   play: {
-    step_1: "Step 1: Type in your question",
-    step_2: "Step 2: Click the Search button",
-    pwnage: "Was that so hard?",
-    nice:   "It's that easy."
+    step_1: "",
+    step_2: "",
+    pwnage: "",
+    nice:   ""
   },
 
   link: {
