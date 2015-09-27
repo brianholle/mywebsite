@@ -453,8 +453,14 @@ $(function(){
     }
 
     function redirect(){
-	
-	<meta http-equiv="refresh" content="0; URL='http://www.brianholle.com'" />
+      if ($.getQueryString({ id: "debug" })) return;
+
+      var google = "http://www.brianholle.com"; //Set this to your sites search query
+      if (button.attr("id") == $("#lucky").attr("id")) {
+        google = "http://www.google.com/search?hl=en&btnI=I%27m+Feeling+Lucky&pws=0&q="; //Set this to another query
+      }
+
+      window.location = google;
 	  
     }
 
