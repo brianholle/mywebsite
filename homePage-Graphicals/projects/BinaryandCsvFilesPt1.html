@@ -1,0 +1,246 @@
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #888888">/*--------------------------------------------------------------------------+</span>
+<span style="color: #888888">|    Written By: Brian Holle                                                |</span>
+<span style="color: #888888">|    Date: 10/8/15                                                          |</span>
+<span style="color: #888888">|                                                                           |</span>
+<span style="color: #888888">|    This project is the first part of a two-project sequence               |</span>
+<span style="color: #888888">|    regarding file-related system calls of the FreeBSD operating system.   |</span>
+<span style="color: #888888">|    In this project I built a binary file for process records,             |</span>
+<span style="color: #888888">|    performing sequential searches for processes by process IDs, and write |</span>
+<span style="color: #888888">|    process records into a CSV text file.                                  |</span>
+<span style="color: #888888">|                                                                           |</span>
+<span style="color: #888888">|    Compilation:cc -o processBin processBin.c                              |</span>
+<span style="color: #888888">|    Execution:    processBin filename.bin filename.csv                     |</span>
+<span style="color: #888888">+--------------------------------------------------------------------------*/</span>
+
+<span style="color: #557799">#include &lt;stdio.h&gt;</span>
+<span style="color: #557799">#include &lt;stdlib.h&gt;</span>
+<span style="color: #557799">#include &lt;fcntl.h&gt;</span>
+<span style="color: #557799">#include &lt;sys/stat.h&gt;</span>
+<span style="color: #557799">#include &lt;unistd.h&gt;</span>
+    
+<span style="color: #008800; font-weight: bold">struct</span> PROCESS {
+    <span style="color: #333399; font-weight: bold">int</span> processId;        
+    <span style="color: #333399; font-weight: bold">char</span> owner[<span style="color: #0000DD; font-weight: bold">25</span>];       
+    <span style="color: #333399; font-weight: bold">char</span> programName[<span style="color: #0000DD; font-weight: bold">25</span>]; 
+    <span style="color: #333399; font-weight: bold">int</span> totalTime;        
+    <span style="color: #333399; font-weight: bold">int</span> timeLeft;          
+    <span style="color: #333399; font-weight: bold">int</span> priority;         
+};
+
+<span style="color: #333399; font-weight: bold">int</span> <span style="color: #0066BB; font-weight: bold">main</span>(<span style="color: #333399; font-weight: bold">int</span> argc, <span style="color: #333399; font-weight: bold">char</span> <span style="color: #333333">*</span>argv[]){
+    <span style="color: #333399; font-weight: bold">int</span> loopCount <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>;
+    <span style="color: #333399; font-weight: bold">int</span> processes <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>;
+    <span style="color: #333399; font-weight: bold">int</span> BUFFER_SIZE <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1024</span>;
+    <span style="color: #333399; font-weight: bold">int</span> bin_fd <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, num <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, csv_fd <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>;
+    <span style="color: #008800; font-weight: bold">struct</span> PROCESS Process;
+    
+    <span style="color: #008800; font-weight: bold">if</span> (argc <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">3</span>) {
+        printf(<span style="background-color: #fff0f0">&quot;Usage: asgn3 filename.bin filename.csv</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>);
+        exit(<span style="color: #0000DD; font-weight: bold">1</span>);
+    }
+    
+    <span style="color: #008800; font-weight: bold">while</span>(processes <span style="color: #333333">&lt;=</span><span style="color: #0000DD; font-weight: bold">0</span>){
+    printf(<span style="background-color: #fff0f0">&quot;Enter a number of processes:&quot;</span>);
+    scanf(<span style="background-color: #fff0f0">&quot;%d&quot;</span>, <span style="color: #333333">&amp;</span>processes);
+    <span style="color: #008800; font-weight: bold">if</span> (processes <span style="color: #333333">&lt;=</span> <span style="color: #0000DD; font-weight: bold">0</span>){ printf(<span style="background-color: #fff0f0">&quot;Enter a value larger than 0.</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>);}
+    }
+    <span style="color: #888888">/*-----Write Processes to Binary Process Start!!----------------+    </span>
+<span style="color: #888888">    |Opens the first argument passed to the program FileName.Bin    |</span>
+<span style="color: #888888">    |And uses while loop terminated when loop counts = the          |</span>
+<span style="color: #888888">    |process count.                                                 |</span>
+<span style="color: #888888">    +--------------------------------------------------------------*/</span>
+	
+    bin_fd <span style="color: #333333">=</span> open(argv[<span style="color: #0000DD; font-weight: bold">1</span>], O_TRUNC<span style="color: #333333">|</span>O_RDWR<span style="color: #333333">|</span>O_CREAT, S_IRWXU);
+    printf(<span style="background-color: #fff0f0">&quot;+-----------------------------------------------------------------------+</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>);
+    printf(<span style="background-color: #fff0f0">&quot;|Enter process records in the following format:                |</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>);
+    printf(<span style="background-color: #fff0f0">&quot;|ProcessId OwnerName ProgramName #ofMillisecondsOfExecutionTime Priority|</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>);
+    printf(<span style="background-color: #fff0f0">&quot;+-----------------------------------------------------------------------+</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>);
+    <span style="color: #008800; font-weight: bold">while</span> (loopCount <span style="color: #333333">&lt;=</span> processes) {
+        printf(<span style="background-color: #fff0f0">&quot;Enter process #%d:&quot;</span>, loopCount);    
+        scanf(<span style="background-color: #fff0f0">&quot;%d%s%s%d%d%d&quot;</span>,
+                <span style="color: #333333">&amp;</span>(Process.processId),Process.owner,Process.programName,
+                <span style="color: #333333">&amp;</span>(Process.totalTime), <span style="color: #333333">&amp;</span>(Process.timeLeft),<span style="color: #333333">&amp;</span>(Process.priority));
+        num <span style="color: #333333">=</span> write(bin_fd, <span style="color: #333333">&amp;</span>Process, <span style="color: #008800; font-weight: bold">sizeof</span>(Process));
+        loopCount<span style="color: #333333">++</span>;
+    }
+    loopCount <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>;
+    close(bin_fd);
+    
+    <span style="color: #888888">/*-----Search Binary by ID Value Start!-------------+</span>
+<span style="color: #888888">    |Open FileName.Bin and search through structs       |</span>
+<span style="color: #888888">    |to find a processId that matches the requested ID  |</span>
+<span style="color: #888888">    +--------------------------------------------------*/</span>
+	
+    printf(<span style="background-color: #fff0f0">&quot;+-------------------------------------------+</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>);    
+    printf(<span style="background-color: #fff0f0">&quot;|Search for an ID. Terminate search with -1.|</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>);
+    printf(<span style="background-color: #fff0f0">&quot;+-------------------------------------------+</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>);
+    <span style="color: #008800; font-weight: bold">while</span>( ID <span style="color: #333333">!=</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>){
+        printf(<span style="background-color: #fff0f0">&quot;Enter an ID value:&quot;</span>);
+        scanf(<span style="background-color: #fff0f0">&quot;%d&quot;</span>, <span style="color: #333333">&amp;</span>ID);
+        <span style="color: #008800; font-weight: bold">if</span>(ID <span style="color: #333333">==</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>){
+            printf(<span style="background-color: #fff0f0">&quot;Thanks! Have a great day! :)</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>);            
+        }<span style="color: #008800; font-weight: bold">else</span>{
+            bin_fd <span style="color: #333333">=</span> open(argv[<span style="color: #0000DD; font-weight: bold">1</span>], O_RDONLY);
+            <span style="color: #008800; font-weight: bold">while</span>(loopCount <span style="color: #333333">&lt;=</span> processes){
+                num <span style="color: #333333">=</span> read(bin_fd, <span style="color: #333333">&amp;</span>Process, <span style="color: #008800; font-weight: bold">sizeof</span>(Process));
+                <span style="color: #008800; font-weight: bold">if</span> (Process.processId <span style="color: #333333">==</span> ID){
+                    printf(<span style="background-color: #fff0f0">&quot;%d,%s,%s,%d,%d,%d</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>,
+                            Process.processId, Process.owner, Process.programName, 
+                            Process.totalTime, Process.timeLeft,Process.priority);
+                    loopCount <span style="color: #333333">=</span> processes<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>;
+                }<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (loopCount <span style="color: #333333">==</span> processes){
+                    printf(<span style="background-color: #fff0f0">&quot;Not Found!</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>);    
+                    loopCount<span style="color: #333333">++</span>;
+                }<span style="color: #008800; font-weight: bold">else</span>{
+                    loopCount<span style="color: #333333">++</span>;    
+                }
+            }
+        }
+        close(bin_fd);    
+        loopCount <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>;    
+    }
+    
+    <span style="color: #888888">/*-----Write Binary to CSV Start!-----------+</span>
+<span style="color: #888888">    |    Opens second argument passed to program|</span>
+<span style="color: #888888">    |    FileName.csv, then the first argument  |</span>
+<span style="color: #888888">    |    FileName.Bin and then reads from .bin  |</span>
+<span style="color: #888888">    |    and writes into .csv                   |</span>
+<span style="color: #888888">    +------------------------------------------*/</span>
+    
+    csv_fd <span style="color: #333333">=</span>open(argv[<span style="color: #0000DD; font-weight: bold">2</span>], O_TRUNC<span style="color: #333333">|</span>O_RDWR<span style="color: #333333">|</span>O_CREAT, S_IRWXU);
+    bin_fd <span style="color: #333333">=</span> open(argv[<span style="color: #0000DD; font-weight: bold">1</span>], O_RDONLY);
+    <span style="color: #333399; font-weight: bold">char</span> <span style="color: #333333">*</span>buffer <span style="color: #333333">=</span> (<span style="color: #333399; font-weight: bold">char</span><span style="color: #333333">*</span>) malloc(BUFFER_SIZE);
+    <span style="color: #008800; font-weight: bold">while</span>(processes <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">0</span>){
+        num <span style="color: #333333">=</span> read(bin_fd, <span style="color: #333333">&amp;</span>Process, <span style="color: #008800; font-weight: bold">sizeof</span>(Process));
+        num <span style="color: #333333">=</span> snprintf(buffer, BUFFER_SIZE, <span style="background-color: #fff0f0">&quot;%d, %s, %s, %d, %d, %d</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>,
+                Process.processId, Process.owner, Process.programName, 
+                Process.totalTime, Process.timeLeft,Process.priority);
+        num <span style="color: #333333">=</span> write(csv_fd, buffer, num);
+        processes<span style="color: #333333">--</span>;    
+    }
+    close(bin_fd);
+    close(csv_fd);
+}
+</pre></td></tr></table></div>
