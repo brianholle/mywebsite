@@ -1,7 +1,0 @@
-/* JS */ gapi.loaded_1(function(_){var window=this;
-var zO,AO,BO;for(_.yO=function(a){return{Fb:function(){return a},jc:function(){return a.openerIframe}}},zO=function(a){(new _.Bt(_.yO(a))).La()},AO="bubble circlepicker float hover hover-menu slide-menu".split(" "),BO=0;BO<AO.length;BO++)_.nn[AO[BO]]=zO;
-
-_.qn["slide-menu"]=function(a){var b=new _.vE(_.yO(a)),c=new _.Nt(b);b.open=function(){};_.xE(b);a.attributes={height:"100%"};a.where=b.Z;a.onClose=function(){b.close()};a.onRestyle=function(a){if(a){var c=!1;a.hasOwnProperty("showMenu")&&(b.hC(a.showMenu),c=!0);a.hasOwnProperty("setHideOnLeave")&&(b.lz(a.setHideOnLeave),c=!0);c||b.resize(a)}};a.onCreate=function(a){a.jc=function(){return this.wk("openerIframe")};c.$=b.$=a;a.Be(b.J);a.register("_ready",(0,_.u)(b.Jc,b),_.an);b.Qb=function(b,c){!a.Ib()&& a.ij([b,c])};_.yE(b,b.K);c.open()}};
-
-});
-// Google Inc.
