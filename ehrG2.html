@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head> </head>
+  <body>
+    <!-- the content goes here -->
+    <script>
+fetch("https://www.ehrdogs.org/animals/search_process", {
+        headers: {
+          accept:
+            "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+          "accept-language": "en-US,en;q=0.9",
+          "cache-control": "no-cache",
+          "content-type":
+            "multipart/form-data; boundary=----WebKitFormBoundaryyKopWrNUPfzGIRGR",
+          pragma: "no-cache",
+          "sec-fetch-dest": "document",
+          "sec-fetch-mode": "navigate",
+          "sec-fetch-site": "same-origin",
+          "sec-fetch-user": "?1",
+          "upgrade-insecure-requests": "1",
+        },
+        referrer: "https://www.ehrdogs.org/animals/search?type=advanced",
+        referrerPolicy: "no-referrer-when-downgrade",
+        body:
+          '------WebKitFormBoundaryyKopWrNUPfzGIRGR\r\nContent-Disposition: form-data; name="type"\r\n\r\nadvanced\r\n------WebKitFormBoundaryyKopWrNUPfzGIRGR\r\nContent-Disposition: form-data; name="Species"\r\n\r\nDog\r\n------WebKitFormBoundaryyKopWrNUPfzGIRGR\r\nContent-Disposition: form-data; name="Status"\r\n\r\nAvailable\r\n------WebKitFormBoundaryyKopWrNUPfzGIRGR\r\nContent-Disposition: form-data; name="Age"\r\n\r\n6 months to 1 year\r\n------WebKitFormBoundaryyKopWrNUPfzGIRGR\r\nContent-Disposition: form-data; name="Sex"\r\n\r\n\r\n------WebKitFormBoundaryyKopWrNUPfzGIRGR\r\nContent-Disposition: form-data; name="Fur>"\r\n\r\n\r\n------WebKitFormBoundaryyKopWrNUPfzGIRGR\r\nContent-Disposition: form-data; name="OKWithKids"\r\n\r\n\r\n------WebKitFormBoundaryyKopWrNUPfzGIRGR\r\nContent-Disposition: form-data; name="OKWithDogs"\r\n\r\n\r\n------WebKitFormBoundaryyKopWrNUPfzGIRGR\r\nContent-Disposition: form-data; name="OKWithCats"\r\n\r\n\r\n------WebKitFormBoundaryyKopWrNUPfzGIRGR\r\nContent-Disposition: form-data; name="Declawed"\r\n\r\n\r\n------WebKitFormBoundaryyKopWrNUPfzGIRGR\r\nContent-Disposition: form-data; name="IndoorOutdoor"\r\n\r\n\r\n------WebKitFormBoundaryyKopWrNUPfzGIRGR\r\nContent-Disposition: form-data; name="SpecialNeeds"\r\n\r\n\r\n------WebKitFormBoundaryyKopWrNUPfzGIRGR\r\nContent-Disposition: form-data; name="searchtext"\r\n\r\n\r\n------WebKitFormBoundaryyKopWrNUPfzGIRGR--\r\n',
+        method: "POST",
+        mode: "cors",
+      }).then(function (response) {
+        response.text().then(function (text) {
+          document.write(text);
+        });
+      });
+    </script>
+  </body>
+</html>
